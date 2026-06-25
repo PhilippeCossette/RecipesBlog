@@ -13,12 +13,17 @@ import {
 
 import { loginSchema } from '#/schema/auth'
 import TextInput from '../ui/TextInput'
+import { logInFN } from '#/db/auth'
+import { useRouter } from '@tanstack/react-router'
+import { useQueryClient } from '@tanstack/react-query'
 
 type LoginProps = {
   switchAuthMode: () => void
 }
 
 export const LoginForm = ({ switchAuthMode }: LoginProps) => {
+  const router = useRouter()
+  const queryClient = useQueryClient()
   const form = useForm({
     validators: {
       onChange: loginSchema,
@@ -27,8 +32,23 @@ export const LoginForm = ({ switchAuthMode }: LoginProps) => {
       email: '',
       password: '',
     },
-    onSubmit: async (values) => {
-      console.log('Form submitted with values:', values)
+    onSubmit: async ({ value }) => {
+      const result = await logInFN({
+        data: {
+          email: value.email,
+          password: value.password,
+        },
+      })
+
+      if (!result.success) {
+        console.error('Login failed')
+        return
+      }
+      await queryClient.invalidateQueries({
+        queryKey: ['currentUser'],
+      })
+      await router.invalidate()
+      router.navigate({ to: '/' })
     },
   })
   return (

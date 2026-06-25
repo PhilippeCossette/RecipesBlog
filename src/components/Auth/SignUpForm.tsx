@@ -11,15 +11,20 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 
+import { useRouter } from '@tanstack/react-router'
+
 import { signUpSchema } from '#/schema/auth'
 import TextInput from '../ui/TextInput'
 import { signUpFN } from '#/db/auth'
+import { useQueryClient } from '@tanstack/react-query'
 
 type SignUpProps = {
   switchAuthMode: () => void
 }
 
 export const SignUpForm = ({ switchAuthMode }: SignUpProps) => {
+  const router = useRouter()
+  const queryClient = useQueryClient()
   const form = useForm({
     validators: {
       onChange: signUpSchema,
@@ -29,12 +34,24 @@ export const SignUpForm = ({ switchAuthMode }: SignUpProps) => {
       password: '',
       username: '',
     },
-    onSubmit: async (values) => {
-      try {
-        await signUpFN({ data: values })
-      } catch (error) {
-        console.error('Error signing up:', error)
+    onSubmit: async ({ value }) => {
+      const result = await signUpFN({
+        data: {
+          email: value.email,
+          password: value.password,
+          username: value.username,
+        },
+      })
+
+      if (!result.success) {
+        console.error('Sign up failed')
+        return
       }
+      await queryClient.invalidateQueries({
+        queryKey: ['currentUser'],
+      })
+      await router.invalidate()
+      router.navigate({ to: '/' })
     },
   })
   return (

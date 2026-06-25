@@ -13,3 +13,9 @@ export const signUpSchema = z.object({
 
 export type LoginType = z.infer<typeof loginSchema>
 export type SignUpType = z.infer<typeof signUpSchema>
+
+export type CurrentUser = {
+  id: string
+  email: string | null
+  username: string | null
+} | null

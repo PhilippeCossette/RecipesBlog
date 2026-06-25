@@ -1,18 +1,35 @@
 import { createServerFn } from '@tanstack/react-start'
 import { getSupabaseServerClient } from '../lib/supabase'
-import { signUpSchema } from '#/schema/auth'
+import { loginSchema, signUpSchema, type CurrentUser } from '#/schema/auth'
 
-export const getUserFN = createServerFn().handler(async () => {
-  const supabase = getSupabaseServerClient()
-  const {
-    data: { user },
-    error,
-  } = await supabase.auth.getUser()
-  if (error) {
-    return null
-  }
-  return user
-})
+export const getUserFN = createServerFn().handler(
+  async (): Promise<CurrentUser> => {
+    const supabase = getSupabaseServerClient()
+    const {
+      data: { user },
+      error,
+    } = await supabase.auth.getUser()
+    if (error || !user) {
+      return null
+    }
+
+    const { data: profile, error: profileError } = await supabase
+      .from('profiles')
+      .select('username')
+      .eq('id', user.id)
+      .maybeSingle()
+
+    if (profileError) {
+      throw new Error(profileError.message)
+    }
+
+    return {
+      id: user.id,
+      email: user.email ?? null,
+      username: profile?.username ?? null,
+    }
+  },
+)
 
 export const signUpFN = createServerFn({ method: 'POST' })
   .validator((data) => {
@@ -34,5 +51,40 @@ export const signUpFN = createServerFn({ method: 'POST' })
       throw new Error(error.message)
     }
 
-    return signUpData
+    return {
+      success: true,
+      user: signUpData.user,
+    }
   })
+
+export const logInFN = createServerFn({ method: 'POST' })
+  .validator((data) => {
+    return loginSchema.parse(data)
+  })
+  .handler(async ({ data }) => {
+    const supabase = getSupabaseServerClient()
+    const { data: logInData, error } = await supabase.auth.signInWithPassword({
+      email: data.email,
+      password: data.password,
+    })
+
+    if (error) {
+      throw new Error(error.message)
+    }
+    return {
+      success: true,
+      user: logInData.user,
+    }
+  })
+
+export const logOutFN = createServerFn().handler(async () => {
+  const supabase = getSupabaseServerClient()
+  const { error } = await supabase.auth.signOut()
+  if (error) {
+    throw new Error(error.message)
+  }
+
+  return {
+    success: true,
+  }
+})

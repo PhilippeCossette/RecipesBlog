@@ -6,8 +6,9 @@ export type Recipe = {
   description: string | null
 
   //   Add ingredients type
-  ingredients: []
+  ingredients: string[]
   steps: string[]
+  categoryId: string
 
   prepTimeMinutes: number | null
   cookTimeMinutes: number | null

@@ -1,3 +1,5 @@
+import type { Category } from './category'
+
 export type Recipe = {
   id: string
 
@@ -8,14 +10,15 @@ export type Recipe = {
   //   Add ingredients type
   ingredients: string[]
   steps: string[]
-  categoryId: string
+  category_id: string
+  categories: Category | null
 
-  prepTimeMinutes: number | null
-  cookTimeMinutes: number | null
+  prep_time_minutes: number | null
+  cook_time_minutes: number | null
   servings: number | null
 
-  coverImageUrl: string | null
+  cover_image_url: string | null
 
-  createdAt: string
-  updatedAt: string
+  created_at: string
+  updated_at: string
 }

@@ -15,6 +15,7 @@ import appCss from '../styles.css?url'
 import type { QueryClient } from '@tanstack/react-query'
 import { TooltipProvider } from '#/components/ui/tooltip'
 import { currentUserQuery } from '#/queries/user'
+import { getCategoriesQuery } from '#/queries/category'
 
 interface MyRouterContext {
   queryClient: QueryClient
@@ -25,9 +26,12 @@ const THEME_INIT_SCRIPT = `(function(){try{var stored=window.localStorage.getIte
 export const Route = createRootRouteWithContext<MyRouterContext>()({
   beforeLoad: async ({ context }) => {
     const user = await context.queryClient.ensureQueryData(currentUserQuery())
+    const categories =
+      await context.queryClient.ensureQueryData(getCategoriesQuery())
 
     return {
       user,
+      categories,
     }
   },
   head: () => ({
@@ -60,27 +64,29 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
         <HeadContent />
       </head>
-      <body className="font-sans antialiased wrap-anywhere flex flex-col ">
-        <TooltipProvider>
-          <TopMenu />
-          {children}
-          <BottomMenu />
+      <body className="font-sans antialiased">
+        <div className="mx-auto flex min-h-screen pb-16 max-w-350 flex-col">
+          <TooltipProvider>
+            <TopMenu />
+            {children}
+            <BottomMenu />
 
-          <TanStackDevtools
-            config={{
-              position: 'bottom-right',
-            }}
-            plugins={[
-              {
-                name: 'Tanstack Router',
-                render: <TanStackRouterDevtoolsPanel />,
-              },
-              TanStackQueryDevtools,
-            ]}
-          />
+            <TanStackDevtools
+              config={{
+                position: 'bottom-right',
+              }}
+              plugins={[
+                {
+                  name: 'Tanstack Router',
+                  render: <TanStackRouterDevtoolsPanel />,
+                },
+                TanStackQueryDevtools,
+              ]}
+            />
 
-          <Scripts />
-        </TooltipProvider>
+            <Scripts />
+          </TooltipProvider>
+        </div>
       </body>
     </html>
   )

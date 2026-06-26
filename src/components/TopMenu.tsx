@@ -1,14 +1,9 @@
-import { Link, useRouteContext } from '@tanstack/react-router'
-import LogOut from './Button/LogOut'
 import { Button } from './ui/button'
 import { IconMenu2 } from '@tabler/icons-react'
-import { Navbar1 } from './navbar1'
+import { Navigation } from './Navigation'
 
 export default function TopMenu() {
-  const { user } = useRouteContext({
-    from: '__root__',
-  })
-  return <Navbar1 />
+  return <Navigation />
 }
 
 export function MobileTopMenu() {
@@ -20,5 +15,3 @@ export function MobileTopMenu() {
     </nav>
   )
 }
-
-export function DesktopTopMenu() {}

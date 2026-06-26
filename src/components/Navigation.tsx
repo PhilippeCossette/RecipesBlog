@@ -1,5 +1,3 @@
-'use client'
-
 import { Book, Menu, Router, Sunset, Trees, Zap } from 'lucide-react'
 import {
   DropdownMenu,
@@ -18,6 +16,8 @@ import {
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 
 import { IconUser } from '@tabler/icons-react'
+import { IconSettings } from '@tabler/icons-react'
+import { IconLogout } from '@tabler/icons-react'
 
 import {
   Accordion,
@@ -34,18 +34,10 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
 } from '#/components/ui/navigation-menu.tsx'
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from '#/components/ui/sheet.tsx'
+
 import { cn } from '#/lib/utils.ts'
-import { Link, Route, useRouteContext, useRouter } from '@tanstack/react-router'
+import { Link, useRouter } from '@tanstack/react-router'
 import { logOutFN } from '#/db/auth'
-import { ro } from 'zod/v4/locales'
-import { QueryClient } from '@tanstack/react-query'
 import { currentUserQuery } from '#/queries/user'
 
 interface MenuItem {
@@ -56,7 +48,7 @@ interface MenuItem {
   items?: MenuItem[]
 }
 
-interface Navbar1Props {
+interface NavigationProps {
   className?: string
   logo?: {
     url: string
@@ -78,7 +70,7 @@ interface Navbar1Props {
   }
 }
 
-const Navbar1 = ({
+const Navigation = ({
   logo = {
     url: 'https://www.shadcnblocks.com',
     src: 'https://deifkwefumgah.cloudfront.net/shadcnblocks/block/logos/shadcnblockscom-icon.svg',
@@ -121,17 +113,17 @@ const Navbar1 = ({
 
     {
       title: 'Recipes',
-      url: '#',
+      url: '/recipes',
     },
   ],
 
   className,
-}: Navbar1Props) => {
+}: NavigationProps) => {
   return (
     <section className={cn('p-4', className)}>
       <div className="  ">
         {/* Desktop Menu */}
-        <nav className="hidden items-center justify-between lg:flex grow">
+        <nav className="hidden items-center justify-between md:flex grow">
           <div className="flex items-center gap-6">
             {/* Here goes logo */}
             <div className="flex items-center">
@@ -146,7 +138,7 @@ const Navbar1 = ({
         </nav>
 
         {/* Mobile Menu */}
-        <div className="block lg:hidden">
+        <div className="block md:hidden">
           <div className="flex items-center justify-between">
             {/* Logo */}
             <a href={logo.url} className="flex items-center gap-2">
@@ -181,14 +173,13 @@ const renderMenuItem = (item: MenuItem) => {
   }
 
   return (
-    <NavigationMenuItem key={item.title}>
-      <NavigationMenuLink
-        href={item.url}
-        className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-muted hover:text-accent-foreground"
-      >
-        {item.title}
-      </NavigationMenuLink>
-    </NavigationMenuItem>
+    <Link to={item.url} key={item.title} className="w-max">
+      <NavigationMenuItem key={item.title}>
+        <NavigationMenuLink className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-muted hover:text-accent-foreground">
+          {item.title}
+        </NavigationMenuLink>
+      </NavigationMenuItem>
+    </Link>
   )
 }
 
@@ -259,36 +250,41 @@ export function UserMenu() {
           <Link to={'/auth'}>Login</Link>
         </Button>
         <Button asChild size="sm">
-          <Link to={'/auth'}>SIgn up</Link>
+          <Link to={'/auth'}>Sign up</Link>
         </Button>
       </div>
     )
   }
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button
-          variant="outline"
-          className="rounded-full aspect-square w-10 h-10 p-0"
-        >
-          <IconUser stroke={2} className="size-5" />
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-40" align="start">
-        <DropdownMenuGroup>
-          <DropdownMenuItem>Profile</DropdownMenuItem>
-
-          <DropdownMenuItem>Settings</DropdownMenuItem>
-        </DropdownMenuGroup>
-
-        <DropdownMenuGroup>
-          <DropdownMenuItem onClick={handleLogOut} className="text-destructive">
+    <div className="flex items-center gap-3">
+      <div>
+        <p className="text-xs text-muted-foreground">Welcome back,</p>{' '}
+        <p className="text-sm">{user.username}</p>
+      </div>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="outline" size="icon" className="rounded-full">
+            <IconUser stroke={2} className="size-5" />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          <DropdownMenuItem>
+            <IconUser stroke={2} />
+            Profile
+          </DropdownMenuItem>
+          <DropdownMenuItem>
+            <IconSettings stroke={2} />
+            Settings
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem variant="destructive">
+            <IconLogout stroke={2} />
             Log out
           </DropdownMenuItem>
-        </DropdownMenuGroup>
-      </DropdownMenuContent>
-    </DropdownMenu>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </div>
   )
 }
 
-export { Navbar1 }
+export { Navigation }

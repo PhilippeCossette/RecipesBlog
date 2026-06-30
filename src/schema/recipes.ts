@@ -1,3 +1,4 @@
+import z from 'zod'
 import type { Category } from './category'
 
 export type Recipe = {
@@ -21,4 +22,20 @@ export type Recipe = {
 
   created_at: string
   updated_at: string
+}
+
+export const RecipesSearchParams = z.object({
+  q: z.string().catch(''),
+  category: z.string().catch(''),
+  sort: z.enum(['newest', 'oldest', 'title-asc', 'title-desc']).catch('newest'),
+  page: z.number().catch(1),
+  limit: z.number().catch(10),
+})
+
+export type GetRecipesOptions = {
+  q?: string
+  category?: string
+  sort?: 'newest' | 'oldest' | 'title-asc' | 'title-desc'
+  page?: number
+  limit?: number
 }

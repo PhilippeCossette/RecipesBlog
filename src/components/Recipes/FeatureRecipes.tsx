@@ -1,6 +1,5 @@
 import { Suspense, useState } from 'react'
 import HomeRecipesSlider from './HomeRecipesSlider'
-import { Button } from '../ui/button'
 import { RecipeGallerySkeleton } from './RecipeGallerySkeleton'
 import CategoryFilterIcon from '../Category/CategoryFilterIcon'
 

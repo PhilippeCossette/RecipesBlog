@@ -1,7 +1,6 @@
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { getRecipesQuery } from '#/queries/recipes'
 import { Gallery } from '#/components/Gallery'
-import { useState } from 'react'
 
 type HomeRecipesSliderProps = {
   category?: string

@@ -1,11 +1,6 @@
 import { getSupabaseServerClient } from '#/lib/supabase'
-import type { Recipe } from '#/schema/recipes'
+import type { GetRecipesOptions, Recipe } from '#/schema/recipes'
 import { createServerFn } from '@tanstack/react-start'
-
-type GetRecipesOptions = {
-  category?: string
-  limit?: number
-}
 
 export const getRecipesFN = createServerFn()
   .validator((data: GetRecipesOptions) => data)
@@ -30,6 +25,10 @@ export const getRecipesFN = createServerFn()
 
     if (data.limit) {
       query = query.limit(data.limit)
+    }
+
+    if (data.q) {
+      query = query.ilike('title', `%${data.q}%`)
     }
 
     const { data: recipes, error } = await query

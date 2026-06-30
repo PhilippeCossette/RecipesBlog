@@ -1,6 +1,5 @@
 import Hero from '#/components/Hero'
 import FeatureRecipes from '#/components/Recipes/FeatureRecipes'
-import PreviewRecipes from '#/components/Recipes/HomeRecipesSlider'
 import { getRecipesQuery } from '#/queries/recipes'
 import { createFileRoute } from '@tanstack/react-router'
 

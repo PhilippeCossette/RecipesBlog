@@ -1,4 +1,11 @@
-import { Book, Sunset, Trees, Zap } from 'lucide-react'
+import {
+  IconMug,
+  IconBurger,
+  IconToolsKitchen3,
+  IconChefHat,
+  IconCookie,
+  IconIceCream,
+} from '@tabler/icons-react'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -71,29 +78,40 @@ const Navigation = ({
       url: '#',
       items: [
         {
-          title: 'Latest Recipes',
-          description: 'The latest industry news, updates, and info',
-          icon: <Book className="size-5 shrink-0" />,
-          url: '#',
+          title: 'Breakfast',
+          description: 'Start your day with delicious breakfast ideas.',
+          icon: <IconMug stroke={2} />,
+          url: '/recipes?category=breakfast',
         },
         {
-          title: 'Popular Recipes',
-          description: 'Our mission is to innovate and empower the world',
-          icon: <Trees className="size-5 shrink-0" />,
-          url: '#',
+          title: 'Lunch',
+          description: 'Fresh and satisfying meals for the middle of your day.',
+          icon: <IconBurger stroke={2} />,
+          url: '/recipes?category=lunch',
         },
         {
-          title: 'Quick & Easy',
-          description: 'Browse job listing and discover our workspace',
-          icon: <Sunset className="size-5 shrink-0" />,
-          url: '#',
+          title: 'Dinner',
+          description: 'Hearty recipes perfect for family dinners.',
+          icon: <IconToolsKitchen3 stroke={2} />,
+          url: '/recipes?category=dinner',
         },
         {
-          title: 'Healthy',
-          description:
-            'Get in touch with our support team or visit our community forums',
-          icon: <Zap className="size-5 shrink-0" />,
-          url: '#',
+          title: 'Meals',
+          description: 'Complete meals for any occasion.',
+          icon: <IconChefHat stroke={2} />,
+          url: '/recipes?category=meals',
+        },
+        {
+          title: 'Snacks',
+          description: 'Quick bites and tasty treats between meals.',
+          icon: <IconCookie stroke={2} />,
+          url: '/recipes?category=snacks',
+        },
+        {
+          title: 'Desserts',
+          description: 'Sweet recipes to finish every meal.',
+          icon: <IconIceCream stroke={2} />,
+          url: '/recipes?category=desserts',
         },
       ],
     },

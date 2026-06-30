@@ -1,19 +1,25 @@
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { getRecipesQuery } from '#/queries/recipes'
-import { Gallery } from '#/components/Gallery'
+import { GalleryWithFilter } from '#/components/GalleryWithFilter'
+import { useState } from 'react'
 
-type HomeRecipesSliderProps = {
-  category?: string
-}
-
-export default function HomeRecipesSlider({
-  category,
-}: HomeRecipesSliderProps) {
-  const { data: recipes } = useSuspenseQuery(
+export default function HomeRecipesSlider() {
+  const [category, setCategory] = useState<string>('')
+  const { data, isLoading } = useSuspenseQuery(
     getRecipesQuery({
       limit: 5,
       category: category,
     }),
   )
-  return <Gallery items={recipes} />
+
+  return (
+    <>
+      <GalleryWithFilter
+        items={data.recipes}
+        isLoading={isLoading}
+        onCategorySelect={setCategory}
+        currentCategory={category}
+      />
+    </>
+  )
 }

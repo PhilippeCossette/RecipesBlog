@@ -1,62 +1,70 @@
 import { Link } from '@tanstack/react-router'
-import { formatTime } from '@/lib/utils'
-import { useMemo } from 'react'
-import type { Recipe } from '#/schema/recipes'
-import { Separator } from '@/components/ui/separator'
-
-import { IconClock } from '@tabler/icons-react'
-import { IconCarrot } from '@tabler/icons-react'
+import { Card, CardContent, CardFooter } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { IconClock, IconUsers } from '@tabler/icons-react'
+import type { Recipe } from '#/schema/recipes'
 
 type RecipeCardProps = {
   recipe: Recipe
 }
 
-export const RecipeCard = ({ recipe }: RecipeCardProps) => {
-  const totalTime = useMemo(() => {
-    const prepTime = recipe.prep_time_minutes
-    const cookTime = recipe.cook_time_minutes
-    const totalTime = (prepTime || 0) + (cookTime || 0)
-    const formattedTime = formatTime(totalTime)
-    return formattedTime
-  }, [recipe])
-
-  const totalIngredients = useMemo(() => {
-    return recipe.ingredients?.length || 0
-  }, [recipe])
+export default function RecipeCard({ recipe }: RecipeCardProps) {
+  const totalTime =
+    (recipe.prep_time_minutes ?? 0) + (recipe.cook_time_minutes ?? 0)
 
   return (
-    <Link to={`/`} className="group rounded-xl">
-      <div className="group relative h-full min-h-108 max-w-full overflow-hidden rounded-xl md:aspect-5/4 lg:aspect-video">
-        <Badge variant="secondary" className="absolute top-4 left-4 z-20 ">
-          {recipe.categories?.name}
-        </Badge>
-        <img
-          src="https://www.denkinesiskekoebmand.dk/img/cookbook/15.jpg"
-          alt={recipe.title}
-          className="absolute h-full w-full object-cover object-center transition-transform duration-300 group-hover:scale-105"
-        />
-        <div className="absolute inset-0 h-full bg-[linear-gradient(transparent_20%,black_100%)] mix-blend-multiply" />
-
-        <div className="absolute inset-x-0 bottom-0 flex flex-col items-start p-4 text-white">
-          <h3 className="mb-1 pt-4 text-md md:text-lg font-semibold md:mb-3 md:pt-4 lg:pt-4">
-            {recipe.title}
-          </h3>
-          <p className="mb-4 text-sm line-clamp-2">{recipe.description}</p>
-          <Separator className="bg-white/30" />
-          <div className="flex gap-5 items-center text-sm mt-2">
-            <Badge variant="ghost">
-              <IconClock size={16} className="mr-1" />
-              <p>{totalTime}</p>
-            </Badge>
-
-            <Badge variant="ghost">
-              <IconCarrot size={16} className="mr-1" />
-              <p>{totalIngredients} ingredients</p>
-            </Badge>
+    <Card className=" overflow-hidden rounded-3xl  p-2 shadow-sm">
+      <div className="relative aspect-square overflow-hidden rounded-2xl bg-muted">
+        {recipe.cover_image_url ? (
+          <img
+            src="https://www.escoffier.edu/wp-content/uploads/2024/12/A-heaping-amount-of-spaghetti-is-topped-with-meatballs-and-a-red-sauce-on-a-brown-plate-with-a-knife-and-fork-to-the-right-of-the-plate.-768.jpg"
+            alt={recipe.title}
+            className="size-full object-cover"
+          />
+        ) : (
+          <div className="flex size-full items-center justify-center text-muted-foreground text-sm">
+            No image
           </div>
-        </div>
+        )}
+
+        {totalTime > 0 && (
+          <Badge className="absolute top-3 right-3 rounded-full bg-background/90 text-foreground">
+            <IconClock stroke={2} className="size-3.5" />
+            {totalTime} min
+          </Badge>
+        )}
       </div>
-    </Link>
+
+      <CardContent className="space-y-2 px-2 pt-3">
+        <h3 className="text-lg font-semibold leading-tight">{recipe.title}</h3>
+
+        {recipe.description && (
+          <p className="line-clamp-2 text-sm text-muted-foreground">
+            {recipe.description}
+          </p>
+        )}
+
+        <div className="flex flex-wrap gap-2 pt-1">
+          {recipe.categories && (
+            <Badge variant="secondary" className="rounded-full">
+              {recipe.categories.name}
+            </Badge>
+          )}
+          {recipe.servings && (
+            <Badge variant="secondary" className="rounded-full">
+              <IconUsers stroke={2} className="size-3.5" />
+              {recipe.servings} servings
+            </Badge>
+          )}
+        </div>
+      </CardContent>
+
+      <CardFooter className="px-2 pb-1">
+        <Button asChild className="w-full rounded-full" size="lg">
+          <Link to={'/'}>View Recipe</Link>
+        </Button>
+      </CardFooter>
+    </Card>
   )
 }

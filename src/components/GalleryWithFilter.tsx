@@ -10,14 +10,24 @@ import {
 } from '#/components/ui/carousel.tsx'
 import { cn } from '#/lib/utils.ts'
 import type { Recipe } from '#/schema/recipes'
-import { RecipeCard } from './Recipes/RecipeCard'
+
+import CategoryFilterIcon from './Category/CategoryFilterIcon'
+import RecipeCard from './Recipes/RecipeCard'
 
 export interface GalleryProps {
   items?: Recipe[]
   className?: string
+  onCategorySelect?: (categorySlug: string) => void
+  currentCategory?: string
+  isLoading?: boolean
 }
 
-const Gallery = ({ items, className }: GalleryProps) => {
+const GalleryWithFilter = ({
+  items,
+  className,
+  onCategorySelect,
+  currentCategory,
+}: GalleryProps) => {
   const [carouselApi, setCarouselApi] = useState<CarouselApi>()
   const [canScrollPrev, setCanScrollPrev] = useState(false)
   const [canScrollNext, setCanScrollNext] = useState(false)
@@ -41,29 +51,35 @@ const Gallery = ({ items, className }: GalleryProps) => {
 
   return (
     <section className={cn('mt-10 md:mt-0', className)}>
-      <div className="hidden shrink-0 w-full gap-2 md:flex justify-end mb-10">
-        <Button
-          size="icon"
-          variant="ghost"
-          onClick={() => {
-            carouselApi?.scrollPrev()
-          }}
-          disabled={!canScrollPrev}
-          className="disabled:pointer-events-auto"
-        >
-          <ArrowLeft className="size-5" />
-        </Button>
-        <Button
-          size="icon"
-          variant="ghost"
-          onClick={() => {
-            carouselApi?.scrollNext()
-          }}
-          disabled={!canScrollNext}
-          className="disabled:pointer-events-auto"
-        >
-          <ArrowRight className="size-5" />
-        </Button>
+      <div className="hidden shrink-0 w-full gap-2 md:flex justify-between mb-10">
+        <CategoryFilterIcon
+          onCategorySelect={onCategorySelect}
+          current={currentCategory}
+        />
+        <div className="hidden shrink-0  gap-2 md:flex justify-end ">
+          <Button
+            size="icon"
+            variant="ghost"
+            onClick={() => {
+              carouselApi?.scrollPrev()
+            }}
+            disabled={!canScrollPrev}
+            className="disabled:pointer-events-auto"
+          >
+            <ArrowLeft className="size-5" />
+          </Button>
+          <Button
+            size="icon"
+            variant="ghost"
+            onClick={() => {
+              carouselApi?.scrollNext()
+            }}
+            disabled={!canScrollNext}
+            className="disabled:pointer-events-auto"
+          >
+            <ArrowRight className="size-5" />
+          </Button>
+        </div>
       </div>
       <div className="w-full">
         <Carousel
@@ -104,4 +120,4 @@ const Gallery = ({ items, className }: GalleryProps) => {
   )
 }
 
-export { Gallery }
+export { GalleryWithFilter }

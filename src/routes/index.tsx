@@ -12,7 +12,7 @@ export const Route = createFileRoute('/')({
 
 function App() {
   return (
-    <main className="page-wrap px-4 pb-8 pt-14">
+    <main className="page-wrap pageLayout">
       <Hero />
       <FeatureRecipes />
     </main>

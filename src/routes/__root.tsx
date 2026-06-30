@@ -64,7 +64,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
         <HeadContent />
       </head>
-      <body className="font-sans antialiased">
+      <body className="font-sans antialiased ">
         <div className="mx-auto flex min-h-screen pb-16 max-w-350 flex-col">
           <TooltipProvider>
             <TopMenu />

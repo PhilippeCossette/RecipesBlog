@@ -1,7 +1,12 @@
+import { RecipesCount } from '#/components/Recipes/RecipesCount'
+import RecipesFilter from '#/components/Recipes/RecipesFilter'
+import RecipesGrid from '#/components/Recipes/RecipesGrid'
+import RecipesGridSkeleton from '#/components/Recipes/RecipesGridSkeleton'
+import { RecipesPagination } from '#/components/Recipes/RecipiesPagination'
 import { getRecipesQuery } from '#/queries/recipes'
 import { RecipesSearchParams } from '#/schema/recipes'
-import { useSuspenseQuery } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
+import { Suspense } from 'react'
 
 export const Route = createFileRoute('/recipes/')({
   component: RouteComponent,
@@ -12,18 +17,22 @@ export const Route = createFileRoute('/recipes/')({
 })
 
 function RouteComponent() {
-  const search = Route.useSearch()
-  const { data: recipes } = useSuspenseQuery(getRecipesQuery(search))
-
   return (
-    <main className="space-y-6">
-      {/* <RecipesFilters /> */}
-
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {recipes.map((recipe) => (
-          <div key={recipe.id}>{recipe.title}</div>
-        ))}
+    <main className="pageLayout space-y-4">
+      <header className="mb-10">
+        <h1 className="text-4xl md:text-6xl font-bold">Find Your Next Meal</h1>
+        <p className="text-sm md:text-md">
+          Search, filter, and browse recipes made for every day cooking.
+        </p>
+      </header>
+      <div className="flex items-center justify-between gap-2 md:flex-col-reverse md:items-stretch md:justify-center md:gap-8">
+        <RecipesCount />
+        <RecipesFilter />
       </div>
+      <Suspense fallback={<RecipesGridSkeleton count={12} />}>
+        <RecipesGrid />
+        <RecipesPagination />
+      </Suspense>
     </main>
   )
 }

@@ -18,4 +18,5 @@ export type CurrentUser = {
   id: string
   email: string | null
   username: string | null
+  role: null | 'admin'
 } | null

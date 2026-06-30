@@ -20,16 +20,18 @@ export type Recipe = {
 
   cover_image_url: string | null
 
+  ingredients_search: string | null
+
   created_at: string
   updated_at: string
 }
 
 export const RecipesSearchParams = z.object({
-  q: z.string().catch(''),
-  category: z.string().catch(''),
-  sort: z.enum(['newest', 'oldest', 'title-asc', 'title-desc']).catch('newest'),
-  page: z.number().catch(1),
-  limit: z.number().catch(10),
+  q: z.string().optional(),
+  category: z.string().optional(),
+  sort: z.enum(['newest', 'oldest', 'title-asc', 'title-desc']).optional(),
+  page: z.coerce.number().min(1).catch(1),
+  limit: z.coerce.number().min(1).max(100).catch(12),
 })
 
 export type GetRecipesOptions = {

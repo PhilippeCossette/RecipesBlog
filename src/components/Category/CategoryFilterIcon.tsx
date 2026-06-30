@@ -11,10 +11,11 @@ import {
 } from '../ui/dropdown-menu'
 
 import { IconX } from '@tabler/icons-react'
-import { IconFilter2 } from '@tabler/icons-react'
+import { IconFilter } from '@tabler/icons-react'
+import { Separator } from '../ui/separator'
 
 type CategoryFilterIconProps = {
-  onCategorySelect?: (categoryId: string) => void
+  onCategorySelect?: (categorySlug: string) => void
   current?: string
 }
 
@@ -24,53 +25,77 @@ export default function CategoryFilterIcon({
 }: CategoryFilterIconProps) {
   const { data: categories } = useSuspenseQuery(getCategoriesQuery())
 
-  const handleCategorySelect = (categoryId: string) => {
-    if (current === categoryId) {
+  const handleCategorySelect = (categorySlug: string) => {
+    if (current === categorySlug) {
       onCategorySelect?.('')
       return
     }
-    onCategorySelect?.(categoryId)
+    onCategorySelect?.(categorySlug)
   }
+
   return (
-    <div className="flex gap-2">
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant="outline" size="sm">
-            <IconFilter2 stroke={2} />
-            Filter by Category
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent className="w-40" align="start">
-          <DropdownMenuGroup>
-            {categories.map((category) => (
-              <DropdownMenuItem
-                className={`${
-                  current === category.id
-                    ? 'bg-accent text-accent-foreground'
-                    : ''
-                } group flex justify-between`}
-                key={category.id}
-                onClick={() => handleCategorySelect(category.id)}
-              >
-                {category.name}
-                {current === category.id && (
-                  <IconX stroke={2} className="hidden group-hover:block" />
-                )}
-              </DropdownMenuItem>
-            ))}
-          </DropdownMenuGroup>
-        </DropdownMenuContent>
-      </DropdownMenu>
-      {current && (
-        <Button
-          className="hover:text-destructive"
-          variant="ghost"
-          onClick={() => handleCategorySelect('')}
-        >
-          <IconX stroke={2} />
-          {categories.find((c) => c.id === current)?.name}
-        </Button>
-      )}
-    </div>
+    <>
+      {/* Mobile: horizontal scrollable pill list, no dropdown */}
+      <div className=" md:hidden">
+        <Separator />
+        <div className="space-y-3 py-3">
+          <h4 className="text-sm">Select Category</h4>
+          <div className=" flex flex-wrap gap-2  pb-1">
+            {categories.map((category) => {
+              const isSelected = current === category.slug
+              return (
+                <Button
+                  key={category.id}
+                  variant={isSelected ? 'default' : 'outline'}
+                  size="sm"
+                  className="shrink-0 rounded-full transition-all"
+                  onClick={() => handleCategorySelect(category.slug)}
+                >
+                  {category.name}
+                </Button>
+              )
+            })}
+          </div>
+        </div>
+      </div>
+
+      {/* Desktop: dropdown */}
+      <div className="hidden gap-2 md:flex">
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant={current ? 'default' : 'outline'}>
+              <IconFilter stroke={2} />
+              {current
+                ? categories.find((c) => c.slug === current)?.name
+                : 'Filter'}
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="w-40" align="start">
+            <DropdownMenuGroup>
+              <DropdownMenuLabel>Select Category</DropdownMenuLabel>
+              {categories.map((category) => (
+                <DropdownMenuItem
+                  className={`${
+                    current === category.slug
+                      ? 'bg-accent text-accent-foreground data-highlighted:bg-destructive/10 data-highlighted:text-destructive-foreground transition-all'
+                      : ''
+                  } group flex justify-between`}
+                  key={category.id}
+                  onClick={() => handleCategorySelect(category.slug)}
+                >
+                  {category.name}
+                  {current === category.slug && (
+                    <IconX
+                      stroke={2}
+                      className="hidden group-hover:block group-hover:text-destructive"
+                    />
+                  )}
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuGroup>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+    </>
   )
 }
